@@ -1,8 +1,14 @@
 import React from "react";
 import uuid from "uuid/v4";
 
+const SHOW = {
+  ALL: "ALL",
+  NOT_DONE: "NOT_DONE"
+};
+
 class App extends React.Component {
   state = {
+    filter: SHOW.ALL,
     todos: {
       [uuid()]: { text: "buy milk", done: false },
       [uuid()]: { text: "dring milk", done: false }
@@ -28,11 +34,48 @@ class App extends React.Component {
     this.setState({ todos: { ...todos, ...todo } });
   };
 
+  setFilter = filter => {
+    this.setState({ filter });
+  };
+
   render() {
-    const { todos, addText } = this.state;
+    const { filter, todos, addText } = this.state;
 
     return (
       <div>
+        <div>
+          <select
+            value={filter}
+            onChange={evt => this.setFilter(evt.target.value)}
+          >
+            <option value={SHOW.ALL}>Show All</option>
+            <option value={SHOW.NOT_DONE}>Show Not Done</option>
+          </select>
+        </div>
+        <ul>
+          {Object.keys(todos)
+            .map(id => ({ id, ...todos[id] }))
+            .filter(todo => todo.done || filter === SHOW.ALL)
+            .map(todo => (
+              <li key={todo.id}>
+                <label>
+                  <input
+                    type="checkbox"
+                    value={todo.done}
+                    onChange={() => this.setDone(todo.id, !todo.done)}
+                  />
+                  <span
+                    style={{
+                      "text-decoration": todo.done ? "line-through" : "none"
+                    }}
+                  >
+                    {todo.text}
+                  </span>
+                </label>
+                <button onClick={() => this.remove(todo.id)}>remove</button>
+              </li>
+            ))}
+        </ul>
         <div>
           <input
             type="text"
@@ -41,30 +84,6 @@ class App extends React.Component {
           />
           <button onClick={this.add}>Add</button>
         </div>
-        <ul>
-          {Object.keys(todos).map(id => {
-            const { text, done } = todos[id];
-            return (
-              <li key={id}>
-                <label>
-                  <input
-                    type="checkbox"
-                    value={done}
-                    onChange={() => this.setDone(id, !done)}
-                  />
-                  <span
-                    style={{
-                      "text-decoration": done ? "line-through" : "none"
-                    }}
-                  >
-                    {text}
-                  </span>
-                </label>
-                <button onClick={() => this.remove(id)}>remove</button>
-              </li>
-            );
-          })}
-        </ul>
       </div>
     );
   }
