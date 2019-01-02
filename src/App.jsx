@@ -1,78 +1,69 @@
 import React from "react";
 import uuid from "uuid/v4";
 
-const createTodo = title => ({
-  id: uuid(),
-  title,
-  done: false
-});
-
 class App extends React.Component {
   state = {
-    todos: [createTodo("Buy milk"), createTodo("Drink milk")],
-    newTitle: ""
+    todos: {
+      [uuid()]: { text: "buy milk", done: false },
+      [uuid()]: { text: "dring milk", done: false }
+    },
+    newText: ""
   };
 
   addTodo = () => {
-    const { todos, newTitle } = this.state;
-    this.setState({
-      todos: [...todos, createTodo(newTitle)],
-      newTitle: ""
-    });
+    const { todos, newText } = this.state;
+    const todo = { [uuid()]: { text: newText, done: false } };
+    this.setState({ todos: { ...todos, ...todo }, newText: "" });
   };
 
-  removeTodo = todo => {
+  removeTodo = id => {
     const { todos } = this.state;
-    this.setState({
-      todos: todos.filter(t => t.id !== todo.id)
-    });
+    delete todos[id];
+    this.setState({ todos });
   };
 
-  toggleTodo = todo => {
+  setDone = (id, done) => {
     const { todos } = this.state;
-    this.setState({
-      todos: todos.map(t => {
-        if (t.id === todo.id) {
-          t.done = !t.done;
-        }
-        return t;
-      })
-    });
+    const todo = { [id]: { ...todos[id], done } };
+    this.setState({ todos: { ...todos, ...todo } });
   };
 
   render() {
-    const { todos, newTitle } = this.state;
+    const { todos, newText } = this.state;
 
     return (
       <div>
         <div>
           <input
             type="text"
-            value={newTitle}
-            onChange={evt => this.setState({ newTitle: evt.target.value })}
+            value={newText}
+            onChange={evt => this.setState({ newText: evt.target.value })}
           />
           <button onClick={this.addTodo}>Add</button>
         </div>
         <ul>
-          {todos.map(todo => (
-            <li key={todo.id}>
-              <label>
-                <input
-                  type="checkbox"
-                  value={todo.done}
-                  onChange={() => this.toggleTodo(todo)}
-                />
-                <span
-                  style={{
-                    "text-decoration": todo.done ? "line-through" : "none"
-                  }}
-                >
-                  {todo.title} - {todo.id}
-                </span>
-              </label>
-              <button onClick={() => this.removeTodo(todo)}>remove</button>
-            </li>
-          ))}
+          {Object.keys(todos).map(id => {
+            const { text, done } = todos[id];
+            return (
+              <li key={id}>
+                <label>
+                  <input
+                    type="checkbox"
+                    value={done}
+                    onChange={() => this.setDone(id, !done)}
+                  />
+                  <span
+                    style={{
+                      "text-decoration": done ? "line-through" : "none"
+                    }}
+                  >
+                    {text}
+                  </span>
+                </label>
+                <button onClick={() => this.removeTodo(id)}>remove</button>
+              </li>
+            );
+          })}
         </ul>
       </div>
     );
