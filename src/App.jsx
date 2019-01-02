@@ -20,6 +20,13 @@ class App extends React.Component {
     });
   };
 
+  removeTodo = todo => {
+    const { todos } = this.state;
+    this.setState({
+      todos: todos.filter(t => t.id !== todo.id)
+    });
+  };
+
   render() {
     const { todos, newTitle } = this.state;
 
@@ -36,7 +43,8 @@ class App extends React.Component {
         <ul>
           {todos.map(todo => (
             <li>
-              {todo.title} <button>remove</button>
+              {todo.title}
+              <button onClick={() => this.removeTodo(todo)}>remove</button>
             </li>
           ))}
         </ul>
