@@ -1,21 +1,22 @@
 import React from "react";
 import uuid from "uuid/v4";
 
+const createTodo = title => ({
+  id: uuid(),
+  title,
+  done: false
+});
+
 class App extends React.Component {
   state = {
-    todos: [
-      {
-        id: uuid(),
-        title: "Buy milk"
-      }
-    ],
+    todos: [createTodo("Buy milk"), createTodo("Drink milk")],
     newTitle: ""
   };
 
   addTodo = () => {
     const { todos, newTitle } = this.state;
     this.setState({
-      todos: [...todos, { id: uuid(), title: newTitle }],
+      todos: [...todos, createTodo(newTitle)],
       newTitle: ""
     });
   };
