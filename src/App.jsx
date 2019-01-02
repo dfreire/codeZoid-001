@@ -28,6 +28,18 @@ class App extends React.Component {
     });
   };
 
+  toggleTodo = todo => {
+    const { todos } = this.state;
+    this.setState({
+      todos: todos.map(t => {
+        if (t.id === todo.id) {
+          t.done = !t.done;
+        }
+        return t;
+      })
+    });
+  };
+
   render() {
     const { todos, newTitle } = this.state;
 
@@ -43,8 +55,21 @@ class App extends React.Component {
         </div>
         <ul>
           {todos.map(todo => (
-            <li>
-              {todo.title}
+            <li key={todo.id}>
+              <label>
+                <input
+                  type="checkbox"
+                  value={todo.done}
+                  onChange={() => this.toggleTodo(todo)}
+                />
+                <span
+                  style={{
+                    "text-decoration": todo.done ? "line-through" : "none"
+                  }}
+                >
+                  {todo.title} - {todo.id}
+                </span>
+              </label>
               <button onClick={() => this.removeTodo(todo)}>remove</button>
             </li>
           ))}
