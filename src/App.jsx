@@ -34,20 +34,21 @@ class App extends React.Component {
     this.setState({ todos: { ...todos, ...todo } });
   };
 
-  setFilter = filter => {
-    this.setState({ filter });
+  onChangeFilter = evt => {
+    this.setState({ filter: evt.target.value });
+  };
+
+  onChangeText = evt => {
+    this.setState({ addText: evt.target.value });
   };
 
   render() {
-    const { filter, todos, addText } = this.state;
+    const { todos, filter, addText } = this.state;
 
     return (
       <div>
         <div>
-          <select
-            value={filter}
-            onChange={evt => this.setFilter(evt.target.value)}
-          >
+          <select value={filter} onChange={this.onChangeFilter}>
             <option value={SHOW.ALL}>Show All</option>
             <option value={SHOW.NOT_DONE}>Show Not Done</option>
           </select>
@@ -55,7 +56,7 @@ class App extends React.Component {
         <ul>
           {Object.keys(todos)
             .map(id => ({ id, ...todos[id] }))
-            .filter(todo => todo.done || filter === SHOW.ALL)
+            .filter(todo => filter === SHOW.ALL || !todo.done)
             .map(todo => (
               <li key={todo.id}>
                 <label>
@@ -77,11 +78,7 @@ class App extends React.Component {
             ))}
         </ul>
         <div>
-          <input
-            type="text"
-            value={addText}
-            onChange={evt => this.setState({ addText: evt.target.value })}
-          />
+          <input type="text" value={addText} onChange={this.onChangeText} />
           <button onClick={this.add}>Add</button>
         </div>
       </div>
