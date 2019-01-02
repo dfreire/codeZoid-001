@@ -7,16 +7,16 @@ class App extends React.Component {
       [uuid()]: { text: "buy milk", done: false },
       [uuid()]: { text: "dring milk", done: false }
     },
-    newText: ""
+    addText: ""
   };
 
-  addTodo = () => {
-    const { todos, newText } = this.state;
-    const todo = { [uuid()]: { text: newText, done: false } };
-    this.setState({ todos: { ...todos, ...todo }, newText: "" });
+  add = () => {
+    const { todos, addText } = this.state;
+    const todo = { [uuid()]: { text: addText, done: false } };
+    this.setState({ todos: { ...todos, ...todo }, addText: "" });
   };
 
-  removeTodo = id => {
+  remove = id => {
     const { todos } = this.state;
     delete todos[id];
     this.setState({ todos });
@@ -29,17 +29,17 @@ class App extends React.Component {
   };
 
   render() {
-    const { todos, newText } = this.state;
+    const { todos, addText } = this.state;
 
     return (
       <div>
         <div>
           <input
             type="text"
-            value={newText}
-            onChange={evt => this.setState({ newText: evt.target.value })}
+            value={addText}
+            onChange={evt => this.setState({ addText: evt.target.value })}
           />
-          <button onClick={this.addTodo}>Add</button>
+          <button onClick={this.add}>Add</button>
         </div>
         <ul>
           {Object.keys(todos).map(id => {
@@ -60,7 +60,7 @@ class App extends React.Component {
                     {text}
                   </span>
                 </label>
-                <button onClick={() => this.removeTodo(id)}>remove</button>
+                <button onClick={() => this.remove(id)}>remove</button>
               </li>
             );
           })}
