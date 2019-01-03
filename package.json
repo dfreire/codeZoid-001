@@ -5,7 +5,10 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
+    "apollo-boost": "0.1.23",
+    "graphql": "14.0.2",
     "react": "16.5.2",
+    "react-apollo": "2.3.3",
     "react-dom": "16.5.2",
     "react-scripts": "2.0.3",
     "uuid": "3.3.2"
