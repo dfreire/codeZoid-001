@@ -10,22 +10,22 @@ const client = new AppoloClient({
 
 const SHOW = {
   ALL: "ALL",
-  NOT_DONE: "NOT_DONE"
+  NOT_COMPLETED: "NOT_COMPLETED"
 };
 
 class App extends React.Component {
   state = {
     filter: SHOW.ALL,
     todos: {
-      [uuid()]: { text: "buy milk", done: false },
-      [uuid()]: { text: "dring milk", done: false }
+      [uuid()]: { text: "buy milk", completed: false },
+      [uuid()]: { text: "dring milk", completed: false }
     },
     addText: ""
   };
 
   add = () => {
     const { todos, addText } = this.state;
-    const todo = { [uuid()]: { text: addText, done: false } };
+    const todo = { [uuid()]: { text: addText, completed: false } };
     this.setState({ todos: { ...todos, ...todo }, addText: "" });
   };
 
@@ -35,9 +35,9 @@ class App extends React.Component {
     this.setState({ todos });
   };
 
-  setDone = (id, done) => {
+  setCompleted = (id, completed) => {
     const { todos } = this.state;
-    const todo = { [id]: { ...todos[id], done } };
+    const todo = { [id]: { ...todos[id], completed } };
     this.setState({ todos: { ...todos, ...todo } });
   };
 
@@ -57,24 +57,26 @@ class App extends React.Component {
         <div>
           <select value={filter} onChange={this.onChangeFilter}>
             <option value={SHOW.ALL}>Show All</option>
-            <option value={SHOW.NOT_DONE}>Show Not Done</option>
+            <option value={SHOW.NOT_COMPLETED}>Show Not Completed</option>
           </select>
         </div>
         <ul>
           {Object.keys(todos)
             .map(id => ({ id, ...todos[id] }))
-            .filter(todo => filter === SHOW.ALL || !todo.done)
+            .filter(todo => filter === SHOW.ALL || !todo.completed)
             .map(todo => (
               <li key={todo.id}>
                 <label>
                   <input
                     type="checkbox"
-                    value={todo.done}
-                    onChange={() => this.setDone(todo.id, !todo.done)}
+                    value={todo.completed}
+                    onChange={() => this.setCompleted(todo.id, !todo.completed)}
                   />
                   <span
                     style={{
-                      "text-decoration": todo.done ? "line-through" : "none"
+                      "text-decoration": todo.completed
+                        ? "line-through"
+                        : "none"
                     }}
                   >
                     {todo.text}
