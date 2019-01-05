@@ -15,18 +15,19 @@ const SHOW = {
 
 class App extends React.Component {
   state = {
-    filter: SHOW.TODO,
+    title: "",
     todos: {
-      [uuid()]: { text: "buy milk", completed: false },
-      [uuid()]: { text: "dring milk", completed: false }
+      [uuid()]: { title: "buy milk", completed: false },
+      [uuid()]: { title: "dring milk", completed: false }
     },
-    addText: ""
+    data: undefined,
+    filter: SHOW.TODO
   };
 
   add = () => {
-    const { todos, addText } = this.state;
-    const todo = { [uuid()]: { text: addText, completed: false } };
-    this.setState({ todos: { ...todos, ...todo }, addText: "" });
+    const { todos, title } = this.state;
+    const todo = { [uuid()]: { title, completed: false } };
+    this.setState({ todos: { ...todos, ...todo }, title: "" });
   };
 
   remove = id => {
@@ -46,11 +47,11 @@ class App extends React.Component {
   };
 
   onChangeText = evt => {
-    this.setState({ addText: evt.target.value });
+    this.setState({ title: evt.target.value });
   };
 
   render() {
-    const { todos, filter, addText } = this.state;
+    const { todos, filter, title, data } = this.state;
 
     return (
       <div>
@@ -79,7 +80,7 @@ class App extends React.Component {
                         : "none"
                     }}
                   >
-                    {todo.text}
+                    {todo.title}
                   </span>
                 </label>
                 <button onClick={() => this.remove(todo.id)}>remove</button>
@@ -87,7 +88,7 @@ class App extends React.Component {
             ))}
         </ul>
         <div>
-          <input type="text" value={addText} onChange={this.onChangeText} />
+          <input type="title" value={title} onChange={this.onChangeText} />
           <button onClick={this.add}>Add</button>
         </div>
         <ApolloProvider client={client}>
@@ -103,9 +104,44 @@ class App extends React.Component {
               }
             `}
           >
-            {({ data }) => {
-              console.log("data", data);
-              return <h2>Data</h2>;
+            {({ data, loading, error }) => {
+              console.log("loading", loading);
+              // console.log("error", error);
+              if (loading) {
+                return <p>Loading...</p>;
+              }
+              console.log("data.length", data.allTodos.length);
+              return (
+                <ul>
+                  {data.allTodos
+                    .filter(todo => filter === SHOW.ALL || !todo.completed)
+                    .map(todo => (
+                      <li key={todo.id}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={todo.completed}
+                            onChange={() =>
+                              this.setCompleted(todo.id, !todo.completed)
+                            }
+                          />
+                          <span
+                            style={{
+                              "text-decoration": todo.completed
+                                ? "line-through"
+                                : "none"
+                            }}
+                          >
+                            {todo.title}
+                          </span>
+                        </label>
+                        <button onClick={() => this.remove(todo.id)}>
+                          remove
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              );
             }}
           </Query>
         </ApolloProvider>
