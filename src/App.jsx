@@ -85,9 +85,7 @@ class App extends React.Component {
                   />
                   <span
                     style={{
-                      "text-decoration": todo.completed
-                        ? "line-through"
-                        : "none"
+                      textDecoration: todo.completed ? "line-through" : "none"
                     }}
                   >
                     {todo.title}
