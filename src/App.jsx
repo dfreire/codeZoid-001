@@ -8,6 +8,16 @@ const client = new AppoloClient({
   uri: "https://fakerql.com/graphql"
 });
 
+const queryAllTodos = gql`
+  {
+    allTodos {
+      id
+      title
+      completed
+    }
+  }
+`;
+
 const SHOW = {
   TODO: "TODO",
   ALL: "ALL"
@@ -93,21 +103,11 @@ class App extends React.Component {
         </div>
         <ApolloProvider client={client}>
           <h1>Apollo!!</h1>
-          <Query
-            query={gql`
-              {
-                allTodos {
-                  id
-                  title
-                  completed
-                }
-              }
-            `}
-          >
+          <Query query={queryAllTodos}>
             {({ data, loading, error }) => {
-              console.log("loading", loading);
-              // console.log("error", error);
-              if (loading) {
+              if (error) {
+                return <p>Error!</p>;
+              } else if (loading) {
                 return <p>Loading...</p>;
               }
               console.log("data.length", data.allTodos.length);
