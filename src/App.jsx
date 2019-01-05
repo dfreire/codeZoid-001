@@ -2,20 +2,20 @@ import React from "react";
 import uuid from "uuid/v4";
 import AppoloClient from "apollo-boost";
 import gql from "graphql-tag";
-import { ApolloProvider, ApolloConsumer } from "react-apollo";
+import { ApolloProvider, Query } from "react-apollo";
 
 const client = new AppoloClient({
   uri: "https://fakerql.com/graphql"
 });
 
 const SHOW = {
-  ALL: "ALL",
-  NOT_COMPLETED: "NOT_COMPLETED"
+  TODO: "TODO",
+  ALL: "ALL"
 };
 
 class App extends React.Component {
   state = {
-    filter: SHOW.ALL,
+    filter: SHOW.TODO,
     todos: {
       [uuid()]: { text: "buy milk", completed: false },
       [uuid()]: { text: "dring milk", completed: false }
@@ -56,8 +56,8 @@ class App extends React.Component {
       <div>
         <div>
           <select value={filter} onChange={this.onChangeFilter}>
+            <option value={SHOW.TODO}>Show TODO</option>
             <option value={SHOW.ALL}>Show All</option>
-            <option value={SHOW.NOT_COMPLETED}>Show Not Completed</option>
           </select>
         </div>
         <ul>
@@ -69,7 +69,7 @@ class App extends React.Component {
                 <label>
                   <input
                     type="checkbox"
-                    value={todo.completed}
+                    checked={todo.completed}
                     onChange={() => this.setCompleted(todo.id, !todo.completed)}
                   />
                   <span
@@ -92,24 +92,22 @@ class App extends React.Component {
         </div>
         <ApolloProvider client={client}>
           <h1>Apollo!!</h1>
-          <ApolloConsumer>
-            {client => {
-              client
-                .query({
-                  query: gql`
-                    {
-                      allTodos {
-                        id
-                        title
-                        completed
-                      }
-                    }
-                  `
-                })
-                .then(result => console.log("result", result));
-              return null;
+          <Query
+            query={gql`
+              {
+                allTodos {
+                  id
+                  title
+                  completed
+                }
+              }
+            `}
+          >
+            {({ data }) => {
+              console.log("data", data);
+              return <h2>Data</h2>;
             }}
-          </ApolloConsumer>
+          </Query>
         </ApolloProvider>
       </div>
     );
