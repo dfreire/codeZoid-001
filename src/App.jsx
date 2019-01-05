@@ -4,6 +4,8 @@ import AppoloClient from "apollo-boost";
 import gql from "graphql-tag";
 import { ApolloProvider, Query } from "react-apollo";
 
+// change to force sync with github
+
 const client = new AppoloClient({
   uri: "https://fakerql.com/graphql"
 });
